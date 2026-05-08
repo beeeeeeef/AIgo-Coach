@@ -4,6 +4,28 @@ import { useMutation } from '@tanstack/react-query'; // 引入 TanStack
 import axios from 'axios';
 import { useChatStore } from './store'; // 引入 Zustand
 
+interface ChatRequestPayload {
+  code: string;
+  question: string;
+}
+
+interface ChatResponseData {
+  reply: string;
+}
+
+interface ApiErrorPayload {
+  code: string;
+  message: string;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  data: T | null;
+  error: ApiErrorPayload | null;
+}
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
+
 function App() {
   const [code, setCode] = useState('');
   const [question, setQuestion] = useState('');
@@ -13,16 +35,26 @@ function App() {
 
   // 2. 使用 TanStack Query 定义请求逻辑
   const chatMutation = useMutation({
-    mutationFn: async (payload: { code: string; question: string }) => {
+    mutationFn: async (payload: ChatRequestPayload) => {
       // 发送请求
-      const res = await axios.post('http://localhost:8080/chat', payload);
+      const res = await axios.post<ApiResponse<ChatResponseData>>(`${API_BASE_URL}/chat`, payload);
       return res.data;
     },
     onSuccess: (data) => {
+      if (!data.success || !data.data) {
+        alert(data.error?.message ?? '请求失败');
+        return;
+      }
+
       // 请求成功后，把 AI 的回复存进 Zustand
-      addMessage('assistant', data.reply);
+      addMessage('assistant', data.data.reply);
     },
     onError: (error) => {
+      if (axios.isAxiosError<ApiResponse<null>>(error)) {
+        alert('请求失败: ' + (error.response?.data?.error?.message ?? error.message));
+        return;
+      }
+
       alert('请求失败: ' + error.message);
     }
   });
@@ -39,7 +71,6 @@ function App() {
     // 清空问题框
     setQuestion('');
   };
-
   return (
     <div className="container">
       <div className="left-panel">

@@ -1,0 +1,11 @@
+CREATE TABLE verify_codes(
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(255) NOT NULL,
+    code VARCHAR(255) NOT NULL,
+    type VARCHAR(20) NOT NULL, -- register / login,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expire_time DATETIME NOT NULL,
+    apply_time INT NOT NULL DEFAULT 1,
+    used BOOLEAN NOT NULL DEFAULT FALSE
+    
+)

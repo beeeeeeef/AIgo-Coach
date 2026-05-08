@@ -19,6 +19,7 @@
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
+    "forceConsistentCasingInFileNames": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
