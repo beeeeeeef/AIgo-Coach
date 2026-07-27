@@ -3,6 +3,7 @@ package repository
 import(
 	"aigo-coach/backend/model"
 	"database/sql"
+	"time"
 )
 
 type VerifyCodeRepositorySQL struct {
@@ -14,14 +15,14 @@ func NewVerifyCodeRepositorySQL(db *sql.DB) *VerifyCodeRepositorySQL {
 // Create 创建验证码记录
 func(r*VerifyCodeRepositorySQL) Create(code *model.VerifyCode) error{
 query := `
-		INSERT INTO verify_codes (email, code, type, expire_time, used, apply_time)
+		INSERT INTO verify_codes (email, code, type, expired_at, used, apply_times)
 		VALUES (?, ?, ?, ?, ?, ?)
 	`
 	result, err := r.DB.Exec(query,
 		code.Email,
 		code.Code,
 		code.Type,
-		code.ExpiresAt,
+		code.ExpiredAt,
 		code.Used,
 		code.ApplyTimes,
 	)
@@ -46,13 +47,13 @@ func (r *VerifyCodeRepositorySQL) GetLatestByEmailAndType(email string, codeType
 			email,
 			code,
 			type,
-			create_time,
-			expire_time,
-			apply_time,
+			created_at,
+			expired_at,
+			apply_times,
 			used
 		FROM verify_codes
 		WHERE email = ? AND type = ?
-		ORDER BY create_time DESC
+		ORDER BY created_at DESC
 		LIMIT 1
 	`
 
@@ -63,7 +64,7 @@ func (r *VerifyCodeRepositorySQL) GetLatestByEmailAndType(email string, codeType
 		&code.Code,
 		&code.Type,
 		&code.CreatedAt,
-		&code.ExpiresAt,
+		&code.ExpiredAt,
 		&code.ApplyTimes,
 		&code.Used,
 	)
@@ -76,11 +77,22 @@ func (r *VerifyCodeRepositorySQL) GetLatestByEmailAndType(email string, codeType
 
 	return &code, nil
 }
+// RefreshCode 刷新验证码（更新 code、过期时间，apply_times+1，重置 used）
+func (r *VerifyCodeRepositorySQL) RefreshCode(id int64, newCode string, expiredAt time.Time) error {
+	query := `
+		UPDATE verify_codes
+		SET code = ?, expired_at = ?, apply_times = apply_times + 1, used = false
+		WHERE id = ?
+	`
+	_, err := r.DB.Exec(query, newCode, expiredAt, id)
+	return err
+}
+
 //IncrementApplyTimes 增加验证码的申请次数
 func (r *VerifyCodeRepositorySQL) IncrementApplyTimes(id int64) error {
 	query := `
 		UPDATE verify_codes
-		SET apply_time = apply_time + 1
+		SET apply_times = apply_times + 1
 		WHERE id = ?
 	`
 

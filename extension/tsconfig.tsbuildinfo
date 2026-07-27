@@ -1,0 +1,1 @@
+{"root":["./src/background/index.ts","./src/content/leetcode-cn.ts","./src/popup/popup.tsx","./src/popup/main.tsx","./src/shared/api.ts","./vite.config.ts"],"version":"5.9.3"}

@@ -1,6 +1,10 @@
 package repository
 
-import "aigo-coach/backend/model"
+import (
+	"time"
+
+	"aigo-coach/backend/model"
+)
 
 type UserRepository interface {
 	GetByEmail(email string) (*model.User, error)
@@ -11,6 +15,7 @@ type UserRepository interface {
 type VerifyCodeRepository interface {
 	Create(code *model.VerifyCode) error
 	GetLatestByEmailAndType(email string, codeType string) (*model.VerifyCode, error)
+	RefreshCode(id int64, code string, expiredAt time.Time) error
 	IncrementApplyTimes(id int64) error
 	MarkUsed(id int64) error
 }

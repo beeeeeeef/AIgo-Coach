@@ -3,9 +3,9 @@ CREATE TABLE verify_codes(
     email VARCHAR(255) NOT NULL,
     code VARCHAR(255) NOT NULL,
     type VARCHAR(20) NOT NULL, -- register / login,
-    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    expire_time DATETIME NOT NULL,
-    apply_time INT NOT NULL DEFAULT 1,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expired_at DATETIME NOT NULL,
+    apply_times INT NOT NULL DEFAULT 0,
     used BOOLEAN NOT NULL DEFAULT FALSE
-    
-)
+        
+    )
