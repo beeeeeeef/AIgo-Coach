@@ -1,0 +1,13 @@
+### 测试 /api/analyze 接口
+POST http://localhost:8080/api/analyze
+Content-Type: application/json
+
+{
+  "site": "leetcode-cn",
+  "title": "两数之和",
+  "url": "https://leetcode.cn/problems/two-sum/",
+  "description": "给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出和为目标值 target 的那两个整数，并返回它们的数组下标。",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        for (int i = 0; i < nums.size(); i++) {\n            for (int j = i + 1; j < nums.size(); j++) {\n                if (nums[i] + nums[j] == target) {\n                    return {i, j};\n                }\n            }\n        }\n        return {};\n    }\n};",
+  "mode": "coach"
+}
