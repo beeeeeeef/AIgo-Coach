@@ -1,23 +1,23 @@
 //请求类型定义
 export interface AnalyzeRequest {
-  site: string;
-  title: string;
-  url: string;
-  description: string;
-  language: string;
-  code: string;
-  mode: string;
+    site: string;
+    title: string;
+    url: string;
+    description: string;
+    language: string;
+    code: string;
+    mode: string;
 }
 //响应类型定义
 export interface AnalyzeResponse {
-  result: boolean;
-  error?: string;
-  data: {
-    summary: string;
-    problem: string[];
-    hints: string[];
-    complexity: string;
-}
+    result: boolean;
+    error?: string;
+    data: {
+        summary: string;
+        problem: string[];
+        hints: string[];
+        complexity: string;
+    }
 }
 
 //调用后端分析接口
