@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { analyzeCode, AnalyzeRequest, AnalyzeResponse } from '../shared/api';
 import './Popup.css';
-
 export default function Popup() {
     const [code, setCode] = useState('');
     const [language, setLanguage] = useState('cpp');

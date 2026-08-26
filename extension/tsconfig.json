@@ -10,7 +10,8 @@
         "strict": true,
         "moduleResolution": "bundler",
         "esModuleInterop": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "types": ["vite/client", "chrome"]
     },
     "include": [
         "src"
