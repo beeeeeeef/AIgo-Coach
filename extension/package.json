@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build && node scripts/copy-manifest.js"
     },
     "dependencies": {
         "react": "^19.2.8",
@@ -12,6 +12,7 @@
     },
     "devDependencies": {
         "@types/chrome": "^0.0.286",
+        "@types/node": "^26.6.2",
         "@types/react": "^19.2.18",
         "@types/react-dom": "^19.2.4",
         "@vitejs/plugin-react": "^6.0.5",

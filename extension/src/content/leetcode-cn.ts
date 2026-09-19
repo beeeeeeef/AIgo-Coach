@@ -32,17 +32,6 @@ function isLeetCodeProblemPage(href = location.href): boolean {
     }
 }
 
-function queryText(selectors: string[]): string {
-    for (const selector of selectors) {
-        const element = document.querySelector(selector);
-        const text = element?.textContent?.trim();
-        if (text) {
-            return text;
-        }
-    }
-    return '';
-}
-
 function queryDescription(selectors: string[]): string {
     for (const selector of selectors) {
         const element = document.querySelector(selector) as HTMLElement | null;
@@ -61,17 +50,17 @@ function extractProblem(): ExtractProblemResponse {
             error: '当前页面不是 leetcode.cn 题目页'
         };
     }
-    const title =
-        queryText([
-            '[data-cy="question-title"]',    // 官方测试标识
-            'div[class*="text-title"]',       // 包含 text-title 的 class
-            'h1',                              // 最后试试 h1
-            '.question-title',
-        ]) || document.title.replace(/\s*-\s*力扣.*$/, '').trim();
-    // ↑ 如果都没找到，从 document.title 提取（去掉 "- 力扣"）
+
+    // 优先从 meta 标签提取标题（更稳定）
+    const ogTitle = document.querySelector('meta[property="og:title"]')?.getAttribute('content') || '';
+    const title = ogTitle.replace(/\s*-\s*力扣.*$/u, '').trim() ||
+        document.title.replace(/\s*-\s*力扣.*$/u, '').trim();
+
     const url = location.href;
-    // 3. 提取描述
-    const description = queryDescription([
+
+    // 优先从 meta 标签提取描述（最完整，包含所有示例和约束）
+    const ogDesc = document.querySelector('meta[property="og:description"]')?.getAttribute('content') || '';
+    const description = ogDesc || queryDescription([
         '[data-track-load="description_content"]',
         'div[class*="question-content"]',
         'div[class*="content__"]',
@@ -92,7 +81,6 @@ function extractProblem(): ExtractProblemResponse {
         };
     }
 
-    // 5. 返回成功结果
     return {
         ok: true,
         data: { title, url, description },
