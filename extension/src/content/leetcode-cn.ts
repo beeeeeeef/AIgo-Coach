@@ -9,6 +9,8 @@ export type ExtractProblemSuccess = {
         title: string;
         url: string;
         description: string;
+        code: string;
+        language: string;
     }
 };
 
@@ -40,6 +42,41 @@ function queryDescription(selectors: string[]): string {
             return text;
         }
     }
+    return '';
+}
+
+function extractLanguage(): string {
+    const langButton = document.querySelector('button[id^="headlessui-listbox-button"]') as HTMLElement | null;
+    const langText = langButton?.textContent?.trim().toLowerCase() || '';
+
+    if (langText.includes('c++')) return 'cpp';
+    if (langText.includes('python')) return 'python';
+    if (langText.includes('java')) return 'java';
+    if (langText.includes('javascript')) return 'javascript';
+    if (langText.includes('go')) return 'go';
+    if (langText.includes('rust')) return 'rust';
+    if (langText.includes('c#')) return 'csharp';
+
+    return 'cpp';
+}
+
+function extractCode(): string {
+    const viewLines = document.querySelectorAll('.view-lines .view-line');
+    if (viewLines.length > 0) {
+        const lines: string[] = [];
+        viewLines.forEach(line => {
+            const text = (line as HTMLElement).textContent || '';
+            lines.push(text);
+        });
+        return lines.join('\n');
+    }
+
+    const monacoEditor = document.querySelector('.monaco-editor') as HTMLElement | null;
+    if (monacoEditor) {
+        const text = monacoEditor.textContent?.trim() || '';
+        if (text.length > 10) return text;
+    }
+
     return '';
 }
 
@@ -81,9 +118,12 @@ function extractProblem(): ExtractProblemResponse {
         };
     }
 
+    const code = extractCode();
+    const language = extractLanguage();
+
     return {
         ok: true,
-        data: { title, url, description },
+        data: { title, url, description, code, language },
     };
 }
 

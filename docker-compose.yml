@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: algo-coach-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: algo
+      POSTGRES_PASSWORD: algo
+      POSTGRES_DB: algo_coach
+    ports:
+          # Windows may block 5432/5433 for Docker bind; use 15432 on host.
+          - "15432:5432"
+    volumes:
+      - algo_coach_pg_data:/var/lib/postgresql/data
+      - ./backend/migration/003_create_chat.sql:/docker-entrypoint-initdb.d/003_create_chat.sql:ro
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: algo-coach-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes:
+  algo_coach_pg_data:
